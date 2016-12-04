@@ -26,7 +26,7 @@ board(2,[
 			[0,0,0,0,0,0],
 			[0,0,0,0,0,0]			
 		]).
-
+		
 /*
 DISPLAY
 */
@@ -110,8 +110,7 @@ no_2x2_aux([_],[_]).
 no_2x2_aux([E1,E2|En],[F1,F2|Fn]) :- 	check_values(E1,E2,F1,F2),
 										no_2x2_aux([E2|En],[F2|Fn]).
 									
-check_values(1,Elem2,Elem3,Elem4) :-	Elem2 #= 2 ; Elem3 #= 2 ; Elem4 #= 2.
-check_values(2,Elem2,Elem3,Elem4) :-	Elem2 #= 1 ; Elem3 #= 1 ; Elem4 #= 1.	
+check_values(Elem1,Elem2,Elem3,Elem4) :-	Elem1 #\= Elem2 ; Elem1 #\= Elem3 ; Elem3#\=Elem4.
 
 /*Connected Rule
 E1 | E2 | E3
