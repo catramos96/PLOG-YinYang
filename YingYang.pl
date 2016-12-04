@@ -98,7 +98,7 @@ ying_yang :- 	write('board:'), read(N), nl,
 solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],Vars),
 								domain(Vars,1,2), !,
 								no_2x2(Bf),
-								connected(Bf),
+								/*connected(Bf),*/
 								labeling([],Vars).
 								
 /*No 2X2 group of cells can contain circles of a single color.*/
@@ -110,30 +110,24 @@ no_2x2_aux([_],[_]).
 no_2x2_aux([E1,E2|En],[F1,F2|Fn]) :- 	check_values(E1,E2,F1,F2),
 										no_2x2_aux([E2|En],[F2|Fn]).
 									
-check_values(Elem1,Elem2,Elem3,Elem4) :-	Elem1 #\= Elem2 ; Elem1 #\= Elem3 ; Elem3#\=Elem4.
+check_values(Elem1,Elem2,Elem3,Elem4) :-	((Elem1 #\= Elem2) #\/ (Elem1 #\= Elem3) #\/ (Elem3#\=Elem4)).
 
 /*Connected Rule
-E1 | E2 | E3
-F1 | F2 | F3
-G1 | G2 | G3
+E1 | E2 
+F1 | F2 
 */
-connected([_,_]).
-connected([R1,R2,R3|Rn]) :- 	connected_aux(R1,R2,R3),
-								connected([R2,R3|Rn]).
-connected([R1,R2,R3|Rn]) :- 	connected_aux(R1,R2,R3),
-								connected([R2,R3|Rn]).
 
-connected_aux([_,_],[_,_],[_,_]).						
-connected_aux([E1,E2,E3|En],[F1,F2,F3|Fn],[G1,G2,G3|Gn]) :- 	(E1 #= E2 ; E1 #= F1),
-																(E2 #= E1 ; E2 #= F2 ; E2 #= E3),
-																(E3 #= E2 ; E3 #= F3),
-																(F1 #= E1 ; F1 #= F2 ; F1 #= G1),
-																(F2 #= E2 ; F2 #= F3 ; F2 #= G2 ; F2 #= F1),
-																(F3 #= E3 ; F3 #= F2 ; F3 = G3),
-																(G1 #= F1 ; G1 #= G2);
-																(G2 #= G1 ; G2 #= F2 ; G2 #= G3),
-																(G3 #= G2 ; G3 #= F3),
-																connected_aux([E2,E3|En],[F2,F3|Fn],[G2,G3|Gn]).	
+connected([_]).
+connected([R1,R2|Rn]) :- connected_aux(R1,R2),
+						connected([R2|Rn]).
+
+
+connected_aux([_],[_]).						
+connected_aux([E1,E2|En],[F1,F2|Fn]) :- ((E1 #= E2 #\/ E1 #= F1) #/\
+										(E2 #= E1 #\/ E2 #= F2) #/\
+										(F1 #= E1 #\/ F1 #= F2) #/\
+										(F2 #= E2 #\/ F2 #= F1)),
+										connected_aux([E2|En],[F2|Fn]).	
 								
 								
 /*
