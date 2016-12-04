@@ -3,13 +3,28 @@ PLOG - YING YANG
 ATENÇÃO: Mudar a fonte de letra para Consola
 */
 
+:-use_module(library(clpfd)).
+:-use_module(library(lists)).
+/*
+1 - black
+2 - white
+*/
 board(1,[	
-			[x,x,x,x,x,x],
-			[x,x,x,w,x,x],
-			[x,x,w,w,b,x],
-			[x,b,x,x,b,b],
-			[w,x,b,x,w,x],
-			[x,w,x,x,x,w]			
+			[0,0,0,0,0,0],
+			[0,0,0,2,0,0],
+			[0,0,2,2,1,0],
+			[0,1,0,0,1,1],
+			[2,0,1,0,2,0],
+			[0,2,0,0,0,2]			
+		]).
+		
+board(2,[	
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0]			
 		]).
 
 /*
@@ -58,10 +73,76 @@ display_limits(NC,C) :- display_symbol(9547),
 						C1 is C + 1,
 						display_limits(NC,C1).
 								
-display_cell(x) :- write(' ').
-display_cell(w) :- display_symbol(9675).
-display_cell(b) :- display_symbol(9679).
+
+display_cell(2) :- display_symbol(9675).
+display_cell(1) :- display_symbol(9679).
+display_cell(0) :- write(' ').
 
 display_symbol(Code) :- char_code(Char,Code), write(Char).
 
-							
+/*
+SOLUTION
+1-b
+2-w
+*/
+
+ying_yang :- 	write('board:'), read(N), nl,
+				board(N,B), !,
+				write('unresolved'),nl,
+				display_board(B), nl, !,
+				solve_ying_yang(B,R),
+				write('resolved'),nl,
+				display_board(R).
+				
+
+solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],Vars),
+								domain(Vars,1,2), !,
+								no_2x2(Bf),
+								labeling([],Vars).
+								
+/*No 2X2 group of cells can contain circles of a single color.*/
+no_2x2([_]).
+no_2x2([R1,R2|Rn]) :- 	no_2x2_aux(R1,R2),
+						no_2x2([R2|Rn]).
+
+no_2x2_aux([_],[_]).						
+no_2x2_aux([E1,E2|En],[F1,F2|Fn]) :- 	check_values(E1,E2,F1,F2),
+										no_2x2_aux([E2|En],[F2|Fn]).
+									
+check_values(1,Elem2,Elem3,Elem4) :-	Elem2 #= 2 ; Elem3 #= 2 ; Elem4 #= 2.
+check_values(2,Elem2,Elem3,Elem4) :-	Elem2 #= 1 ; Elem3 #= 1 ; Elem4 #= 1.	
+								
+								
+/*
+Creates a new Board with the Vars and returns a list of the vars
+*/
+load_vars([],Bt,Bt,Vars,Vars).
+load_vars([R1|Rn],T,Bt,TV,Vars) :-  load_row_vars(R1,[],Rf,TV,TV2),
+									append(T,[Rf],T2),
+									load_vars(Rn,T2,Bt,TV2,Vars).
+
+load_row_vars([],Rf,Rf,Vars,Vars).						
+load_row_vars([0|En],T,Rf,TV,Vars) :- 	append(T,[_X|[]],T2), !,
+										append(TV,[_X|[]],TV2),
+										load_row_vars(En,T2,Rf,TV2,Vars).
+load_row_vars([E1|En],T,Rf,TV,Vars) :-	append(T,[E1|[]],T2), !,
+										load_row_vars(En,T2,Rf,TV,Vars).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					
