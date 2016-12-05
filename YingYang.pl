@@ -5,6 +5,7 @@ ATENÇÃO: Mudar a fonte de letra para Consola
 
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
+
 /*
 1 - black
 2 - white
@@ -97,8 +98,8 @@ ying_yang :- 	write('board:'), read(N), nl,
 
 solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],Vars),
 								domain(Vars,1,2), !,
-								/*no_2x2(Bf),*/
-								connected(Bf),
+								no_2x2(Bf),
+								connected(Bf),	/*just rules*/
 								labeling([],Vars).
 								
 /*No 2X2 group of cells can contain circles of a single color.*/
@@ -121,8 +122,8 @@ G1 | G2 | G3 -> last row
 connected([R1,R2,R3|Rn]) :- 	connected_first_row(R1,R2),
 								connected_other_rows([R1,R2,R3|Rn]).
 								
-connected_corner(Corner,A,B) :- (Corner #= A #\/ Corner #= B).
-connected_limit(A,B,C,D) :- (A #= B #\/ A #= C #\/ A #= D).
+connected_corner(Corner,A,B) :- (A #= Corner #\/ B #= Corner).
+connected_limit(A,B,C,D) :- (B #= A #\/ C #= A #\/ D #= A).
 
 /*
 E1 | E2 | E3 | E4 | E5 -> first row
@@ -152,7 +153,7 @@ connected_other_rows([[Cx1|Cxn],[Cy1|Cyn],[Cz1|Czn]|Rn]) :- 	connected_corner(Cx
 																connected_other_rows([[Cy1|Cyn],[Cz1|Czn]|Rn]).
 
 connected_other_rows_aux([_,_,Cx3],[_,Cy2,Cy3],[_,_,Cz3])	:-	connected_limit(Cy3,Cx3,Cy2,Cz3). 		/*right limit*/												
-connected_other_rows_aux([_,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn],[_,Cz2,Cz3|Czn]) :-	(Cy2 #= Cx2 #\/ Cy2 #= Cy1 #\/ Cy2 #= Cy3 #\/ Cy2 #= Cz2),
+connected_other_rows_aux([_,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn],[_,Cz2,Cz3|Czn]) :-	(Cx2 #= Cy2 #\/ Cy1 #= Cy2 #\/ Cy3 #= Cy2 #\/ Cz2 #= Cy2),
 																				connected_other_rows_aux([Cx2,Cx3|Cxn],[Cy2,Cy3|Cyn],[Cz2,Cz3|Czn]).
 
 /*
@@ -164,7 +165,7 @@ connected_last_row([Cx1,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn]) :- 	connected_corner(Cy1
 															connected_last_row_aux([Cx1,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn]).
 
 connected_last_row_aux([_,Cxn1],[Cyn,Cyn1]) :- 				connected_corner(Cyn1,Cyn,Cxn1).	/*right limit*/
-connected_last_row_aux([_,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn]) :-	(Cy2 #= Cy1 #\/ Cy2 #= Cy3 #\/ Cy2 #= Cx2),
+connected_last_row_aux([_,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn]) :-	connected_limit(Cy2,Cy1,Cy3,Cx2), 
 																connected_last_row_aux([Cx2,Cx3|Cxn],[Cy2,Cy3|Cyn]).
 						
 								
