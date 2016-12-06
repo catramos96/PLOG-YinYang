@@ -28,6 +28,24 @@ board(2,[
 			[0,0,0,0,0,0]			
 		]).
 		
+board(3,[	
+			[1,0,0,1],
+			[0,2,1,0],
+			[0,1,0,0],
+			[0,0,0,2]		
+		]).
+		
+board(4,[	
+			[0,0,0],
+			[0,0,0],
+			[0,0,0]		
+		]).
+board(5,[	
+			[0,0,0],
+			[0,0,0],
+			[0,0,0]		
+		]).
+		
 /*
 DISPLAY
 */
@@ -97,11 +115,11 @@ ying_yang :- 	write('board:'), read(N), nl,
 				
 
 solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],Vars),
-								domain(Vars,1,2), !,
-								no_2x2(Bf),
+								domain(Vars,1,2),
 								connected(Bf),
-								/*region rule*/
-								labeling([],Vars).
+								no_2x2(Bf),
+								regions(Bf),
+								labeling([ffc],Vars).
 								
 /*No 2X2 group of cells can contain circles of a single color.*/
 no_2x2([_]).
@@ -169,8 +187,66 @@ connected_last_row([Cx1,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn]) :- 	connected_corner(Cy1
 connected_last_row_aux([_,Cxn1],[Cyn,Cyn1]) :- 				connected_corner(Cyn1,Cyn,Cxn1).		/*right corner*/
 connected_last_row_aux([_,Cx2,Cx3|Cxn],[Cy1,Cy2,Cy3|Cyn]) :-	connected_limit(Cy2,Cy1,Cy3,Cx2), 	/*bottom limit cells*/
 																connected_last_row_aux([Cx2,Cx3|Cxn],[Cy2,Cy3|Cyn]).
-						
+	
+/*
+Regions Rule - Only 2 regions: white and black
+*/
+
+count_eq(_Val,[],0).							%count_eq
+count_eq(Val,[H|T],C) :-	Val #= H #<=> V,		
+							C #= V + C2,
+							count_eq(Val,T,C2).
+
+regions(Bf) :-  	board_size(Bf,NR,NC,_),
+					flat_board(Bf,FB),
+					element(I,FB,1),
+					element(J,FB,2),
+					region(FB,1,I,NR,NC,[],RA),
+					region(FB,2,J,NR,NC,[],RB).
+				
+/*
+T1 - Indices com o valor = 1 já percorridoss
+T2 - Indices com o valor = 2 já percorridos
+*/
+region(Board,V,I,NR,NC,T,F) :- 	(Vn #= 1 #\/ Vn #= 2) #/\ (VT #= 0 #\/ VT #= 1),	
+									element(I,Board,Vn),
+									count_eq(I,T,VT),
+									region_aux(V,Vn,VT,Board,I,NR,NC,T,F).
+							
+
+region_aux(1,2,_,_,_,_,_,F,F) :- write('End 2'),nl.
+region_aux(2,1,_,_,_,_,_,F,F) :- write('End 3'),nl.
+region_aux(V,V,1,_,I,_,_,T,F) :- count_eq(I,T,1).
+region_aux(V,V,0,Board,I,NR,NC,T,F) :- 		append(T,[I],T2),
+											calc_index(I,R,C,NR,NC),
+											(R0 #= R-1 #/\ R1 #= R+1 #/\ I0 #= I-1 #/\ I1 #= I+1),
+											calc_index(I2,R0,C,NR,NC), calc_index(I3,R1,C,NR,NC),
+
+											region(Board,V,I1,NR,NC,T2,T3),  	%left
+											region(Board,V,I3,NR,NC,T3,T4), 	%bottom
+											region(Board,V,I0,NR,NC,T4,T5),  	%right
+											region(Board,V,I2,NR,NC,T5,F). 		%top
 								
+
+same_lists([],[],1).										
+same_lists([X|Xn],[Y|Yn],C) :- 	X #= Y,
+								same_lists(Xn,Yn,C).
+same_lists(_,_,0).							
+have_elements([],_).
+have_elements([X|Xn],Y) :- count_eq(X,Y,1), have_elements(Xn,Y).
+
+						
+																		
+board_size([R1|Rn],NRows,NColumns,NCells) :- 	length([R1|Rn],NRows), length(R1,NColumns),
+												NCells is NRows * NColumns.
+
+flat_board([],[]).												
+flat_board([R1|Rn],BoardFlat) :- 	append(R1,T,BoardFlat),
+									flat_board(Rn,T).
+									
+calc_index(I,R,C,NR,NC) :- 	(I #> 0 #/\ I #=< NR*NC), 
+							(I #= (R - 1)*NC + C).
+							
 /*
 Creates a new Board with the Vars and returns a list of the vars
 */
