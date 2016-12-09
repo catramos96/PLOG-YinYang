@@ -15,10 +15,16 @@ regions(Board,RL1,RL2) :-  	board_size(Board,NR,NC,NCells),
 							length(RL1,N1), length(RL2,N2),
 							region_list(1,0,N1,FlatBoard,RL1),			/*RL1 Lista com os elementos com valor = 1*/
 							region_list(2,0,N2,FlatBoard,RL2),			/*RL2 Lista com os elementos de valor = 2*/
-							check_connectivity(RL1,RL1,NR,NC),
-							check_connectivity(RL2,RL2,NR,NC).	/*Verifica a conectividade entre os elementos da regiao 1*/
-							
-check_connectivity([I1|In],RegionList,NR,NC). /*-> Função que vê se existe conectividade entre todos os elementos de RegionList*/
+							check_connectivity(RL1,NR,NC),
+							check_connectivity(RL2,NR,NC).
+
+/*Predicado que pega num elemento do region list e constroi o path que passa em todos os elementos de region list*/
+check_connectivity(RegionList,NR,NC) :- element(_,RegionList,I1),
+										find_path(I1,NR,NC,RegionList,[],Path).
+										
+find_path(_,_,_,R,F,F) :- length(R,L), length(F,L).
+/*Predicado para se aquele index não tiver nenhum adjacente que ainda não esteja no path Final*/
+find_path(Index,NR,NC,RegionList,Pt,F). /*Acabar*/
 												
 
 /*

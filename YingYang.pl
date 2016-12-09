@@ -21,7 +21,7 @@ ying_yang :- 	write('board:'), read(N), nl,
 solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],V1),
 								board_size(Bf,NR,NC,NCells),
 								domain(V1,1,2),
-								connected(Bf),
+								/*connected(Bf),*/
 								no_2x2(Bf),
 								regions(Bf,RL1,RL2),
 								domain(RL1,1,NCells),
