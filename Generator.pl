@@ -2,16 +2,13 @@
 Board generator
 */
 
-generator(Nc,Nr,Bf) :- 
+generator(Nc,Nr,Np,Bf) :- 
 	%criar um tabuleiro vazio
 	create_empty_board(Nc,Nr,Bi) ,
 	%resolve-lo
 	solve_ying_yang(Bi,B) ,
-	%escolher o numero de pecas que ficam (1 terco)
-	N is Nc * Nr / 3 ,
-	Nmax is floor(N) , 
-	%pecas a eleminar
-	Nrem is Nc * Nr - Nmax , 
+	%escolher o numero de pecas que sao eliminadas
+	Nrem is Nc * Nr - Np , 
 	%eliminar as restantes aleatoriamente
 	remove_pieces(Nrem,Nc,Nr,B,Bf) .
 	
