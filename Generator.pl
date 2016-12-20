@@ -13,7 +13,7 @@ generator(Nc,Nr,Bf) :-
 	%pecas a eleminar
 	Nrem is Nc * Nr - Nmax , 
 	%eliminar as restantes aleatoriamente
-	remove_pieces(Nrem,Nc,Nr,B,Bf).
+	remove_pieces(Nrem,Nc,Nr,B,Bf) .
 	
 create_empty_board( _, 0, []) :- !.	
 create_empty_board(Nc,Nr,[H|T]) :- 
