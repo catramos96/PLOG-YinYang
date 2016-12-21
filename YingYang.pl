@@ -12,7 +12,7 @@ ATENÇÃO: Mudar a fonte de letra para Consola
 :- use_module(library(lists)).
 :- use_module(library(random)).	
 
-ying_yang :- 	
+/*ying_yang :- 	
 	menu(Nr,Nc,Np), 
 	generator(Nc,Nr,Np,B),
 	write('unresolved'),nl,
@@ -33,7 +33,7 @@ solve_ying_yang(Bi,Bf) :-
 							no_2x2(Bf),
 							regions(Bf),
 							reset_timer,
-							labeling([ffc],V1) . 
+							labeling([ffc],V1) . */
 								
 reset_timer :- statistics(walltime,_).	
 
@@ -42,7 +42,7 @@ print_time :-
 	TS is ((T//10)*10)/1000,
 	nl, write('Time: '), write(TS), write('s'), nl, nl.
 	
-/*	
+
 ying_yang :- 	write('board:'), read(N), nl,
 				board(N,B), !,
 				write('unresolved'),nl,
@@ -57,8 +57,8 @@ solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],V1),
 								connected(Bf),
 								no_2x2(Bf),
 								regions(Bf),
-								labeling([],V1).
-
+								labeling([ffc],V1).
+/*
 Creates a new Board with the Vars and returns a list of the vars
 */
 

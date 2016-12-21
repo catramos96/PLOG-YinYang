@@ -18,21 +18,9 @@ count_eq(Val,[H|T],C) :-	Val #= H #<=> V,
 
 regions(Board) :-  	board_size(Board,NR,NC,NCells),
 					flat_board(Board,FlatBoard),				/*Board Matrix em lista*/
+					create_list(NCells,0,[],P), !,			/*lista de elementos não processados*/
+					check_conectivity(FlatBoard,1,_,_,NR,NC,P,FlatBoard).
 					
-					count_eq(1,FlatBoard,N1),					/*N1 = Numero de 1 no Board*/
-					count_eq(2,FlatBoard,N2),					/*N2 = Numero de 2 no Board*/
-					NCells #= N1 + N2,							/*NCells = N1 + N2*/
-					
-					element(I1,FlatBoard,1),					/*obter indice de peça preta*/
-					element(I2,FlatBoard,2),					/*obter indice de peça branca*/
-					
-					create_list(NCells,0,[],P1), !, 			/*lista de elementos não processados*/
-
-					check_conectivity(FlatBoard,I1,1,NR,NC,P1,P2),
-					write(1-P2),nl,
-					check_conectivity(FlatBoard,I2,2,NR,NC,P2,FlatBoard), !,
-					write(2-FlatBoard),nl.
-
 /*
 check_conectivity(+FlatBoard,+Index,+Value,+NumberRows,+NumberColumns,+ProcessedList,-FinalProcessedList,+Processed?)
 FlatBoard - Board in form of a lista
@@ -44,43 +32,55 @@ ProcessedList - List of processed indexes
 FinalProcessedList - Final List of processed indexes
 Processed? - Index has already been processed ?
 */
-check_conectivity(FlatBoard,Index,Value,NR,NC,P,PF) :- 	/*T == 1 -> não processado*/
-														element(Index,P,Processed) , (Processed #= 0) #<=> T,
+
+check_conectivity(FlatBoard,Value,Index1,Index2,NR,NC,P,PF) :- 	check_process(FlatBoard,1,Index1,Process1,P),
+																check_process(FlatBoard,2,Index2,Process2,P), !,
+																process_index(FlatBoard,Process1,Process2,Value,Index1,Index2,NR,NC,P,PF).
+
+check_process(FlatBoard,Value,Index,Process,PList) :- 	/*T == 1 -> não processado*/
+														element(Index,PList,Processed) , (Processed #= 0) #<=> T,
 														/*V == 1 -> Valor no tabuleiro = Value*/
 														element(Index,FlatBoard,X), (X #= Value) #<=> V,
-														/*U == 1 -> Index Valido*/
-														calc_index(Index,CellR,CellC,NR,NC,R), (R #= 1) #<=> U,
 														/*V && T*/
-														Process #<=> (V #/\ T #/\ U), !,
-														process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,Process).
+														Process #<=> (V #/\ T).
+
+process_index(FlatBoard,1,_,1,Index1,Index2,NR,NC,P,PF) :- 	process_adj(FlatBoard,1,Index1,Index2,NR,NC,P,PF).	/*Processar o index1*/
+process_index(FlatBoard,_,1,2,Index1,Index2,NR,NC,P,PF) :- 	process_adj(FlatBoard,2,Index2,Index1,NR,NC,P,PF).	/*Processar o index2*/
+process_index(FlatBoard,0,1,_,Index1,Index2,NR,NC,P,PF) :- 	process_adj(FlatBoard,2,Index2,Index1,NR,NC,P,PF).	/*Processar o index2*/
+process_index(FlatBoard,1,0,_,Index1,Index2,NR,NC,P,PF) :- 	process_adj(FlatBoard,1,Index1,Index2,NR,NC,P,PF).	/*Processar o index1*/
+process_index(_,0,0,_,_,_,_,_,P,P). 																			/*Nenhum para processar*/												
+
 																																					
-process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como processado*/
-																	setList(Value,P,Index,P2),
+process_adj(FlatBoard,Value,Index,Next_index,NR,NC,P,PF) :- 		setList(Value,P,Index,P2),
+																	element(Index,FlatBoard,Value),
+																	/*U == 1 -> Index Valido*/
+																	calc_index(Index,CellR,CellC,NR,NC,1),
+																	
+																	write(Value-Index-P2), nl,
 																	
 																	/*Proximas coordenadas*/
 																	CellR1 #= CellR + 1, 
 																	CellR2 #= CellR - 1,
 																	CellC1 #= CellC + 1, 
-																	CellC2 #= CellC - 1, !,
+																	CellC2 #= CellC - 1, 
 																	
 																	calc_index(TopI,CellR2,CellC,NR,NC,TopValid),				
 																	calc_index(LeftI,CellR,CellC2,NR,NC,LeftValid),				
 																	calc_index(RightI,CellR,CellC1,NR,NC,RightValid),					
-																	calc_index(BottomI,CellR1,CellC,NR,NC,BottomValid), !,
+																	calc_index(BottomI,CellR1,CellC,NR,NC,BottomValid),
 																	
-																	/*TopValid #= 1 #\/ LeftValid #= 1 #\/ RightValid #= 1 #\/ BottomValid #= 1, !,
-																	TopValue #= Value #\/ LeftValue #= Value #\/ RightValue #= Value #\/ BottomValue #= Value, !,*/
+																	TopValid #= 1 #\/ LeftValid #= 1 #\/ RightValid #= 1 #\/ BottomValid #= 1,
 																	
-																	check_conectivity_aux(TopValid,TopI,FlatBoard,Value,TopValue,NR,NC,P2,P3),
-																	check_conectivity_aux(LeftValid,LeftI,FlatBoard,Value,LeftValue,NR,NC,P3,P4),
-																	check_conectivity_aux(RightValid,RightI,FlatBoard,Value,RightValue,NR,NC,P4,P5),
-																	check_conectivity_aux(BottomValid,BottomI,FlatBoard,Value,BottomValue,NR,NC,P5,PF).
-
-process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,PF,PF,0).
+																	check_conectivity_aux(Value,Next_index,TopValid,TopI,FlatBoard,NR,NC,P2,P3),
+																	check_conectivity_aux(Value,Next_index,LeftValid,LeftI,FlatBoard,NR,NC,P3,P4),
+																	check_conectivity_aux(Value,Next_index,RightValid,RightI,FlatBoard,NR,NC,P4,P5),
+																	check_conectivity_aux(Value,Next_index,BottomValid,BottomI,FlatBoard,NR,NC,P5,PF).
 																	
-check_conectivity_aux(1,Index,Board,Value,Value,NR,NC,P,F)	:-	element(Index,Board,Value), write(Index),
-																check_conectivity(Board,Index,Value,NR,NC,P,F).
-check_conectivity_aux(_,_,_,_,-1,_,_,P,P).
+check_conectivity_aux(1,Next_index,1,Index,Board,NR,NC,P,F)	:-	check_conectivity(Board,2,Index,Next_index,NR,NC,P,F).
+																
+check_conectivity_aux(2,Next_index,1,Index,Board,NR,NC,P,F)	:-	check_conectivity(Board,1,Next_index,Index,NR,NC,P,F).
+																
+check_conectivity_aux(_,_,0,_,_,_,_,P,P).
 
 /*
 create_list(NCells,Value,T,List)
