@@ -15,7 +15,7 @@ Solução
 */
 
 count_eq(_Val,[],0).							%count_eq
-count_eq(Val,[H|T],C) :-	Val #= H #<=> V,		
+count_eq(Val,[H|T],C) :-	Val #= H, %#<=> V,		
 							C #= V + C2,
 							count_eq(Val,T,C2).
 
