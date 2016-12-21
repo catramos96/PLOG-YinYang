@@ -26,22 +26,14 @@ ying_yang :-
 	fd_statistics .	
 	
 solve_ying_yang(Bi,Bf) :-		
-	load_vars(Bi,[],Bf,[],V1),
-	board_size(Bf,NR,NC,NCells),
-	domain(V1,1,2),
-	connected(Bf),
-	no_2x2(Bf),
-	%regions(Bf,RL1,RL2),
-	%domain(RL1,1,NCells),
-	%domain(RL2,1,NCells),
-	%append(RL1,RL2,V2),
-	%all_distinct(V2),
-	%append(V1,V2,V3),
-	reset_timer,
-	labeling([ffc],V1) . 	%leftmost, min, max, first_fail, anti_fisrt_fail, ffc, max_regret, variable(sel)
-	%write(V1),
-	%write(RL1),
-	%write(RL2).
+							load_vars(Bi,[],Bf,[],V1),
+							board_size(Bf,NR,NC,NCells),
+							domain(V1,1,2),
+							connected(Bf),
+							no_2x2(Bf),
+							regions(Bf),
+							reset_timer,
+							labeling([ffc],V1) . 
 								
 reset_timer :- statistics(walltime,_).	
 
@@ -66,7 +58,7 @@ solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],V1),
 								no_2x2(Bf),
 								regions(Bf),
 								labeling([],V1).
-/*
+
 Creates a new Board with the Vars and returns a list of the vars
 */
 

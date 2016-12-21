@@ -1,4 +1,4 @@
-/**
+/*
 Region Rule
 Encontrar uma celula preta e branca com element
 Escolher caminho apartir da preta e branca:
@@ -9,13 +9,10 @@ Escolher caminho apartir da preta e branca:
 	
 Problema
 	- Preenche tudo com 1 no principio, o melhor é ir avançando com valores 1 e 2 ao mesmo tempo
-	
-Solução
-	- Processar index1 index2 alternadamente
 */
 
 count_eq(_Val,[],0).							%count_eq
-count_eq(Val,[H|T],C) :-	Val #= H, %#<=> V,		
+count_eq(Val,[H|T],C) :-	Val #= H #<=> V,		
 							C #= V + C2,
 							count_eq(Val,T,C2).
 
@@ -81,7 +78,7 @@ process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como 
 
 process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,PF,PF,0).
 																	
-check_conectivity_aux(1,Index,Board,Value,Value,NR,NC,P,F)	:-	element(Index,Board,Value),
+check_conectivity_aux(1,Index,Board,Value,Value,NR,NC,P,F)	:-	element(Index,Board,Value), write(Index),
 																check_conectivity(Board,Index,Value,NR,NC,P,F).
 check_conectivity_aux(_,_,_,_,-1,_,_,P,P).
 
