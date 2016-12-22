@@ -56,8 +56,11 @@ solve_ying_yang(Bi,Bf) :-		load_vars(Bi,[],Bf,[],V1),
 								domain(V1,1,2),
 								connected(Bf),
 								no_2x2(Bf),
-								regions(Bf),
-								labeling([ffc],V1).
+								regions(Bf,L1,L2),
+								append(L1,L2,V2),
+								domain(V2,1,NCells),
+								append(V1,V2,V3),
+								labeling([ffc],V3).
 /*
 Creates a new Board with the Vars and returns a list of the vars
 */
