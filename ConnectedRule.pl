@@ -14,7 +14,6 @@ connected_center(Center,A,B,C,D) :- (Center #= A #\/ Center #= B #\/ Center #= C
 /*
 E1 | E2 | E3 | E4 | E5 -> first row
 F1 | F2 | F3 | F4 | F5 -> second row
-
 connected_corner 		= E1->E2 || E1->F1
 connected_first_row_aux = E2->E1 || E2-F2 || E2->E3  ... E3-> ... E4->
 connected_corner		= E5->E4 || E5->F5

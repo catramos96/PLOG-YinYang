@@ -8,5 +8,4 @@ no_2x2_aux([_],[_]).
 no_2x2_aux([E1,E2|En],[F1,F2|Fn]) :- 	check_values(E1,E2,F1,F2),
 										no_2x2_aux([E2|En],[F2|Fn]).
 									
-check_values(Elem1,Elem2,Elem3,Elem4) :-	((Elem1 #\= Elem2) #\/ (Elem1 #\= Elem3) #\/ (Elem3#\=Elem4)).
-
+check_values(Elem1,Elem2,Elem3,Elem4) :-	((Elem1 #\= Elem2) #\/ (Elem1 #\= Elem3) #\/ (Elem3 #\= Elem4)).

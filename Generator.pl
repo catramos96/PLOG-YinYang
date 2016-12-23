@@ -6,7 +6,7 @@ generator(Nc,Nr,Np,Bf) :-
 	%criar um tabuleiro vazio
 	create_empty_board(Nc,Nr,Bi) ,
 	%resolve-lo
-	solve_ying_yang(Bi,B) ,
+	solve_yin_yang(Bi,B,[ffc,value(mySelValores)]) ,
 	%escolher o numero de pecas que sao eliminadas
 	Nrem is Nc * Nr - Np , 
 	%eliminar as restantes aleatoriamente

@@ -1,7 +1,12 @@
 /*
-1 - black
-2 - white
+STATISTICS
 */
+reset_timer :- statistics(walltime,_).	
+
+print_time :-
+	statistics(walltime,[_,T]),
+	TS is ((T//10)*10)/1000,
+	nl, write('Time: '), write(TS), write('s'), nl, nl.
 
 /*
 MENUS
@@ -54,6 +59,9 @@ board(6,[
 		
 /*
 DISPLAY
+
+1 - black
+2 - white
 */
 display_board(ID) :- board(ID,M) , display_board(M).
 display_board([R1|Rn]) :-   length(R1,NColumns),
@@ -104,42 +112,3 @@ display_cell(1) :- display_symbol(9679).
 display_cell(0) :- write(' ').
 
 display_symbol(Code) :- char_code(Char,Code), write(Char).
-
-/*
-SOME TESTS
-*/
-board(1,[	
-			[0,0,0,0,0,0],
-			[0,0,0,2,0,0],
-			[0,0,2,2,1,0],
-			[0,1,0,0,1,1],
-			[2,0,1,0,2,0],
-			[0,2,0,0,0,2]			
-		]).
-		
-board(2,[	
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0]			
-		]).
-		
-board(3,[	
-			[1,0,0,1],
-			[0,2,1,0],
-			[0,1,0,0],
-			[0,0,0,2]		
-		]).
-		
-board(4,[	
-			[0,0,0],
-			[1,0,0],
-			[0,0,2]		
-		]).
-board(5,[	
-			[0,0,0],
-			[0,0,0],
-			[0,0,0]		
-		]).
