@@ -12,6 +12,19 @@ generator(Nc,Nr,Np,Bf) :-
 	%eliminar as restantes aleatoriamente
 	remove_pieces(Nrem,Nc,Nr,B,Bf) .
 	
+mySelValores(Var, _Rest, BB, BB1) :-
+	fd_set(Var, Set),
+	select_rand_value(Set, Value),
+	(   
+	   first_bound(BB, BB1), Var #= Value
+           ;   
+	   later_bound(BB, BB1), Var #\= Value
+    ).
+	
+select_rand_value(Set, Value) :-
+	fdset_to_list(Set, Lis),
+	random_select(Value, Lis, _) .
+	
 create_empty_board( _, 0, []) :- !.	
 create_empty_board(Nc,Nr,[H|T]) :- 
     create_empty_board_aux(Nc,H),

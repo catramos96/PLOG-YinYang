@@ -33,21 +33,7 @@ solve_yin_yang(Bi,Bf,Options) :-
 	no_2x2(Bf),
 	%regions(Bf),
 	reset_timer,
-	labeling(Options,V1) . 
-
-mySelValores(Var, _Rest, BB, BB1) :-
-	fd_set(Var, Set),
-	select_rand_value(Set, Value),
-	(   
-	   first_bound(BB, BB1), Var #= Value
-           ;   
-	   later_bound(BB, BB1), Var #\= Value
-    ).
-	
-select_rand_value(Set, Value) :-
-	fdset_to_list(Set, Lis),
-	random_select(Value, Lis, _) .
-	
+	labeling(Options,V1) . 	
 
 /*
 Creates a new Board with the Vars and returns a list of the vars
