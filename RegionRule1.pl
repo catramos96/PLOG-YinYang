@@ -1,20 +1,11 @@
-/*
-Region Rule
-Encontrar uma celula preta e branca com element
-Escolher caminho apartir da preta e branca:
-	- encontrar indexes para as quatro direcções 
-	- processar quantro direções
-	- cada celula processada pode ou não ser com aquele valor ou pode ainda não ser processada se ja foi processada
-	- como saber se foi processada ? lista em que cada indice é um ou zero conforme se foi processada ou nao (<=>)
-	
-Problema
-	- Preenche tudo com 1 no principio, o melhor é ir avançando com valores 1 e 2 ao mesmo tempo
+/**
+Region Rule1
+Verifica a connectividade através de uma pesquisa em largura primeiro nas celulas de valor 1 e depois nas celulas de valor 2
+Inicialmente o tabuleiro é transformado numa lista e é usado uma lista auxiliar do mesmo tamanho com todos os elementos a 0
+Por cada Index processado altera-se na lista auxiliar na posição Index para o valor 1 ou 2 conforme o valor a analisar
+Apenas se processa indices que ainda não foram processados
+Condição de paragem: Não houver mais índices para processar
 */
-
-count_eq(_Val,[],0).							%count_eq
-count_eq(Val,[H|T],C) :-	Val #= H #<=> V,		
-							C #= V + C2,
-							count_eq(Val,T,C2).
 
 regions(Board,Nr,Nc) :- NCells is Nr * Nc,
 						flat_board(Board,FlatBoard),				/*Board Matrix em lista*/
@@ -34,7 +25,7 @@ regions(Board,Nr,Nc) :- NCells is Nr * Nc,
 						write(2-FlatBoard),nl.
 
 /*
-check_conectivity(+FlatBoard,+Index,+Value,+NumberRows,+NumberColumns,+ProcessedList,-FinalProcessedList,+Processed?)
+check_conectivity(+FlatBoard,+Index,+Value,+NumberRows,+NumberColumns,+ProcessedList,-FinalProcessedList)
 FlatBoard - Board in form of a lista
 Index - Index in the FlatBoard to be processed
 Value - expected value
@@ -42,7 +33,6 @@ NumberRows - Number of Rows in the original board Matrix
 NumberColumns - Number os Columns in the original board Matrix
 ProcessedList - List of processed indexes
 FinalProcessedList - Final List of processed indexes
-Processed? - Index has already been processed ?
 */
 check_conectivity(FlatBoard,Index,Value,NR,NC,P,PF) :- 	/*T == 1 -> não processado*/
 														element(Index,P,Processed) , (Processed #= 0) #<=> T,
@@ -53,8 +43,12 @@ check_conectivity(FlatBoard,Index,Value,NR,NC,P,PF) :- 	/*T == 1 -> não process
 														/*V && T*/
 														Process #<=> (V #/\ T #/\ U), !,
 														process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,Process).
-																																					
-process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como processado*/
+
+/*
+process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,Process)
+Se Process = 1 então é processado os indices adjacentes de Index
+*/														
+process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como processado -> marcar posição do index a processar com o valor 1*/
 																	setList(Value,P,Index,P2),
 																	
 																	/*Proximas coordenadas*/
@@ -63,13 +57,17 @@ process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como 
 																	CellC1 #= CellC + 1, 
 																	CellC2 #= CellC - 1, !,
 																	
+																	/*Calcula indexes dos adjacentes*/
+																	
 																	calc_index(TopI,CellR2,CellC,NR,NC,TopValid),				
 																	calc_index(LeftI,CellR,CellC2,NR,NC,LeftValid),				
 																	calc_index(RightI,CellR,CellC1,NR,NC,RightValid),					
 																	calc_index(BottomI,CellR1,CellC,NR,NC,BottomValid), !,
 																	
 																	/*TopValid #= 1 #\/ LeftValid #= 1 #\/ RightValid #= 1 #\/ BottomValid #= 1, !,
-																	TopValue #= Value #\/ LeftValue #= Value #\/ RightValue #= Value #\/ BottomValue #= Value, !,*/
+																	TopValue #= Value #\/ LeftValue #= Value #\/ RightValue #= Value #\/ BottomValue #= Value, !,
+																	
+																	Verificar connectividade com células adjacentes*/
 																	
 																	check_conectivity_aux(TopValid,TopI,FlatBoard,Value,TopValue,NR,NC,P2,P3),
 																	check_conectivity_aux(LeftValid,LeftI,FlatBoard,Value,LeftValue,NR,NC,P3,P4),
@@ -77,7 +75,15 @@ process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como 
 																	check_conectivity_aux(BottomValid,BottomI,FlatBoard,Value,BottomValue,NR,NC,P5,PF).
 
 process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,PF,PF,0).
-																	
+
+/*
+check_conectivity_aux(Valid,Index,Board,Value,IndexValue,NR,NC,P,F)
+Valid - 1 true  or 0 false
+Value - Valor espectável 
+IndexValue - Valor da célula
+
+Se  célula for válida e com o mesmo valor espectável então verifica-se a conectividade no index.
+*/																	
 check_conectivity_aux(1,Index,Board,Value,Value,NR,NC,P,F)	:-	element(Index,Board,Value), write(Index),
 																check_conectivity(Board,Index,Value,NR,NC,P,F).
 check_conectivity_aux(_,_,_,_,-1,_,_,P,P).
@@ -109,6 +115,7 @@ C - Column que pertence a Index
 NR - Numero de Rows do Board Original
 NC - Numbero de Columns do Board Original
 V - Se o Index é valido
+Calcula o número do index para a coluna C e linha R de uma matriz com NR Linhas e NC Colunas.
 */					
 calc_index(I,R,C,NR,NC,1) :- 	(R #> 0 #/\ R #=< NR),
 								(C #> 0 #/\ C #=< NC),
@@ -116,6 +123,18 @@ calc_index(I,R,C,NR,NC,1) :- 	(R #> 0 #/\ R #=< NR),
 								
 calc_index(_,_,_,_,_,0).
 
+/*
+count_eq(Val,List,C)
+Val - Valor a pesquisar
+List
+C - número de ocorrencias de Val em List
+*/
+
+count_eq(_Val,[],0).							%count_eq
+count_eq(Val,[H|T],C) :-	Val #= H #<=> V,		
+							C #= V + C2,
+							count_eq(Val,T,C2).
+							
 /*
 setList(Element,ListI,Position,ListF) 
 Element - Elemento na posição Position na ListF

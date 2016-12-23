@@ -36,7 +36,9 @@ solve_yin_yang(Bi,Bf,Options) :-
 	labeling(Options,V1) . 	
 
 /*
-Creates a new Board with the Vars and returns a list of the vars
+load_vars(Board,[],Board_with_vars,[],all_vars)
+Substitui as celulas com valor 0 do Board por variaveis _ e adiciona as mesmas
+a uma lista com todas as variaveis
 */
 
 load_vars([],Bt,Bt,Vars,Vars).
