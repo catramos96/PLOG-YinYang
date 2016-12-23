@@ -9,7 +9,7 @@ regions(Board) :-  	board_size(Board,NR,NC,NCells),
 					check_conectivity(FlatBoard,1,_,_,NR,NC,P,FlatBoard).
 					
 /*
-check_conectivity(+FlatBoard,+Index,+Value,+NumberRows,+NumberColumns,+ProcessedList,-FinalProcessedList)
+check_conectivity(+FlatBoard,+Value,+Index1,+Index2+NumberRows,+NumberColumns,+ProcessedList,-FinalProcessedList)
 Value - Valor a processar
 Index1 - Indice do Board com valor a 1
 Index2 - Indice do Board com valor a 2
@@ -25,7 +25,7 @@ check_conectivity(FlatBoard,Value,Index1,Index2,NR,NC,P,PF) :- 	check_process(Fl
 																process_index(FlatBoard,Process1,Process2,Value,Index1,Index2,NR,NC,P,PF).
 
 /*
-check_process(FlatBoard,Value,Index,Process,PList)
+check_process(FlatBoard,Value,Index,ProcessedList,ProcessedList)
 Verifica se o Index do FlatBoard ja foi processado e se o seu valor no Board (X) é igual a Value
 */
 check_process(FlatBoard,Value,Index,Process,PList) :- 	/*T == 1 -> não processado*/
@@ -36,7 +36,7 @@ check_process(FlatBoard,Value,Index,Process,PList) :- 	/*T == 1 -> não processa
 														Process #<=> (V #/\ T).
 
 /*
-process_index(FlatBoard,Process1,Process2,Value,Index1,Index2,NR,NC,P,PF)
+process_index(FlatBoard,Process1,Process2,Value,Index1,Index2,NumberRows,NumberColumns,ProcessedList,ProcessedListF)
 Processa as celulas adjacentes do IndexX conforme os valores de Process1 e Process2
 A condição de paragem é quando não é para processar nenhuma das celulas adjacentes
 */
@@ -47,7 +47,7 @@ process_index(FlatBoard,1,0,_,Index1,Index2,NR,NC,P,PF) :- 	process_adj(FlatBoar
 process_index(_,0,0,_,_,_,_,_,P,P). 																															
 
 /*
-process_adj(FlatBoard,Value,Index,Next_index,NR,NC,P,PF)
+process_adj(FlatBoard,Value,Index,Next_index,NumberRows,NumberColumns,ProcessedList,ProcessedListF)
 Processa Index com Value em Board e marca-o como processado
 */																																					
 process_adj(FlatBoard,Value,Index,Next_index,NR,NC,P,PF) :- 		setList(Value,P,Index,P2),					/*Marca como processado*/
@@ -78,7 +78,7 @@ process_adj(FlatBoard,Value,Index,Next_index,NR,NC,P,PF) :- 		setList(Value,P,In
 																	check_conectivity_aux(Value,Next_index,BottomValid,BottomI,FlatBoard,NR,NC,P5,PF).
 
 /*
-check_conectivity_aux(Value,Next_index,Valid,Index,Board,NR,NC,P,F)
+check_conectivity_aux(Value,Next_index,Valid,Index,FlatBoard,NumberRows,NumberColumns,ProcessedList,ProcessedListF)
 Processa o Next_index mas guarda Index para ser o próximo a processar na lista caso este seja válido
 Se o Value = 1 então o valor de Index = 1 e o valor de Next_Index = 2
 Se o Value = 2 então o valor de Index = 2 e o valor de Next_Index = 1

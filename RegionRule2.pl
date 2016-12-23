@@ -10,7 +10,7 @@ regions(Board,NR,NC,NCells,L1,L2) :-  	flat_board(Board,FlatBoard),
 										check_region(FlatBoard,NR,NC,[],[],L1,L2). 
 
 /*
-check_region(Board,NR,NC,T1,T2,L1,L2)
+check_region(Board,NumberRows,NumberColumns,T1,T2,Region1,Region2)
 NR - Numero de linhas
 NC - Numero de colunas
 T1 - Lista temporaria da região 1
@@ -32,7 +32,7 @@ check_region(FlatBoard,NR,NC,T1,T2,L1,L2) :-	element(Index,FlatBoard,V),		/*Inde
 												check_region(FlatBoard,NR,NC,T3,T4,L1,L2).			
 
 /*
-verify_connection(FlatBoard,Index,NR,NC,T1,T2,L1,L2,Value)
+verify_connection(FlatBoard,Index,NumberRows,NumberColumns,T1,T2,REgion1,Region2,Value)
 Index - Indice a processar
 Value - Valor do Index
 

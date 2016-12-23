@@ -45,7 +45,7 @@ check_conectivity(FlatBoard,Index,Value,NR,NC,P,PF) :- 	/*T == 1 -> não process
 														process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,Process).
 
 /*
-process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,Process)
+process_index(FlatBoard,Index,Value,CellR,CellC,NumberRows,NumberColumns,ProcessedList,ProcessedListF,Process)
 Se Process = 1 então é processado os indices adjacentes de Index
 */														
 process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como processado -> marcar posição do index a processar com o valor 1*/
@@ -77,7 +77,7 @@ process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,P,PF,1) :- 	/*Marcar como 
 process_index(FlatBoard,Index,Value,CellR,CellC,NR,NC,PF,PF,0).
 
 /*
-check_conectivity_aux(Valid,Index,Board,Value,IndexValue,NR,NC,P,F)
+check_conectivity_aux(Valid,Index,Board,Value,IndexValue,NumberRows,NumberColumns,ProcessedList,ProcessedListF)
 Valid - 1 true  or 0 false
 Value - Valor espectável 
 IndexValue - Valor da célula
