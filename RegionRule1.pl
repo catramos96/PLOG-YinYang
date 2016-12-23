@@ -7,7 +7,7 @@ Apenas se processa indices que ainda não foram processados
 Condição de paragem: Não houver mais índices para processar
 */
 
-regions(Board,Nr,Nc) :- NCells is Nr * Nc,
+regions(Board) :- 		board_size(Board,NR,NC,NCells),
 						flat_board(Board,FlatBoard),				/*Board Matrix em lista*/
 						
 						count_eq(1,FlatBoard,N1),					/*N1 = Numero de 1 no Board*/

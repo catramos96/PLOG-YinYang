@@ -6,8 +6,9 @@
  L1 com os indices relativamente à região 1 e L2 com os indices da região 2
 */
 
-regions(Board,NR,NC,NCells,L1,L2) :-  	flat_board(Board,FlatBoard),
-										check_region(FlatBoard,NR,NC,[],[],L1,L2). 
+regions(Board,L1,L2) :-  	board_size(Board,NR,NC,NCells),
+							flat_board(Board,FlatBoard),
+							check_region(FlatBoard,NR,NC,[],[],L1,L2). 
 
 /*
 check_region(Board,NumberRows,NumberColumns,T1,T2,Region1,Region2)
